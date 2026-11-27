@@ -1,0 +1,228 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sutero — Visual Asset Generator</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;500;600&family=Noto+Serif:wght@300;400;500&display=swap"
+    rel="stylesheet"
+  />
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <svg class="svg-defs" aria-hidden="true" focusable="false">
+    <defs>
+      <symbol id="sutero-wordmark" viewBox="0 0 820 116">
+        <path d="M71 31 C70 21 62 17 49 17 C35 17 27 22 27 31 C27 40 36 44 56 48 C83 54 97 64 97 83 C97 104 78 116 49 116 C18 116 1 103 1 82 L23 82 C24 93 34 99 49 99 C65 99 75 93 75 83 C75 73 65 69 44 64 C18 58 5 49 5 32 C5 12 22 0 49 0 C76 0 93 12 94 31 Z" />
+        <path d="M144 2 L144 73 C144 102 165 116 193 116 C221 116 242 102 242 73 L242 2 L219 2 L219 73 C219 90 209 98 193 98 C177 98 167 90 167 73 L167 2 Z" />
+        <path d="M284 2 L380 2 L380 20 L343.5 20 L343.5 114 L320.5 114 L320.5 20 L284 20 Z" />
+        <path d="M423 2 L511 2 L511 20 L446 20 L446 49 L506 49 L506 67 L446 67 L446 96 L514 96 L514 114 L423 114 Z" />
+        <path fill-rule="evenodd" d="M562 2 L624 2 C648 2 660 15 660 36 C660 54 650 64 635 67 L665 114 L640 114 L612 68 L585 68 L585 114 L562 114 Z M585 20 L585 52 L620 52 C631 52 637 46 637 36 C637 26 631 20 620 20 Z" />
+        <path fill-rule="evenodd" d="M763 0 C799 0 820 22 820 58 C820 94 799 116 763 116 C727 116 706 94 706 58 C706 22 727 0 763 0 Z M763 18 C741 18 729 33 729 58 C729 83 741 98 763 98 C785 98 797 83 797 58 C797 33 785 18 763 18 Z" />
+      </symbol>
+    </defs>
+  </svg>
+
+  <!-- Top Bar -->
+  <header class="topbar">
+    <div class="topbar-brand">
+      <span class="brand-mark">SUTERO</span>
+      <span class="brand-sub">Asset Generator</span>
+    </div>
+
+    <div class="topbar-group">
+      <span class="tb-label">Canvas</span>
+      <div class="pill-group" role="group" aria-label="Canvas presets">
+        <button type="button" class="pill-btn" data-preset="hero">Hero 696×868</button>
+        <button type="button" class="pill-btn" data-preset="approach">Approach 1408×704</button>
+        <button type="button" class="pill-btn" data-preset="footer">Footer 1408×684</button>
+        <button type="button" class="pill-btn is-active" data-preset="desktop">Desktop 1440×900</button>
+      </div>
+      <div class="dim-inputs" title="Custom canvas dimensions">
+        <input type="number" id="input-width" min="240" max="2880" step="1" value="1440" aria-label="Canvas width" />
+        <span>×</span>
+        <input type="number" id="input-height" min="240" max="2400" step="1" value="900" aria-label="Canvas height" />
+      </div>
+    </div>
+
+    <div class="topbar-group">
+      <span class="tb-label">Surface</span>
+      <div class="pill-group" role="group" aria-label="Surface theme">
+        <button type="button" class="pill-btn is-active" data-surface="light">Light</button>
+        <button type="button" class="pill-btn" data-surface="dark">Dark</button>
+      </div>
+    </div>
+
+    <div class="topbar-group topbar-recipes">
+      <span class="tb-label">Recipes</span>
+      <div class="pill-group" role="group" aria-label="Starter recipes">
+        <button type="button" class="pill-btn is-active" data-recipe="silk-ridge-stipple">Silk Ridge Stipple</button>
+        <button type="button" class="pill-btn" data-recipe="midnight-horizon">Midnight Horizon</button>
+        <button type="button" class="pill-btn" data-recipe="editorial-tapestry">Editorial Tapestry</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main 2-Pane Studio -->
+  <div class="studio">
+    <!-- Center Stage -->
+    <main class="stage-pane">
+      <div class="stage-canvas-area" id="stage-area">
+        <div class="artboard-wrap" id="artboard-wrap">
+          <canvas id="stage-canvas"></canvas>
+
+          <!-- Safe-Zone dashed outline guide -->
+          <div class="safe-zone-guide" id="safe-zone-guide" aria-hidden="true"></div>
+
+          <!-- Live Type Preview Overlay (never included in exports) -->
+          <div class="type-overlay" id="type-overlay" aria-hidden="true"></div>
+
+          <div class="stage-telemetry" id="stage-telemetry">1440×900 · 7 layers</div>
+        </div>
+      </div>
+
+      <!-- Bottom Stage Action Bar -->
+      <div class="stage-bar">
+        <div class="stage-bar-left">
+          <button type="button" class="btn-secondary" id="shuffle-btn">Shuffle Seed</button>
+          <span class="seed-badge" id="seed-badge">#17</span>
+
+          <label class="inline-field">
+            <span>Safe-Zone</span>
+            <select id="select-safe-zone" aria-label="Safe zone cutout">
+              <option value="bottom-left">Bottom-Left Pocket</option>
+              <option value="upper-left">Upper-Left Editorial</option>
+              <option value="center">Center Wordmark</option>
+              <option value="diagonal">Diagonal Sweep</option>
+              <option value="full-bleed">Full-Bleed</option>
+            </select>
+          </label>
+
+          <label class="inline-field">
+            <span>Fluidity</span>
+            <input type="range" id="range-fluidity" min="0.25" max="1.65" step="0.05" value="1.05" />
+            <span class="val-readout" id="val-fluidity">1.05</span>
+          </label>
+
+          <div class="inline-field">
+            <span>Type</span>
+            <div class="pill-group pill-compact" role="group" aria-label="Type preview">
+              <button type="button" class="pill-btn" data-type-preview="off">Off</button>
+              <button type="button" class="pill-btn" data-type-preview="wordmark">Wordmark</button>
+              <button type="button" class="pill-btn is-active" data-type-preview="headline">Headline</button>
+            </div>
+          </div>
+
+          <label class="check-pill">
+            <input type="checkbox" id="toggle-guide" />
+            <span>Guide</span>
+          </label>
+        </div>
+
+        <div class="stage-bar-right">
+          <div class="pill-group pill-compact" role="group" aria-label="PNG Export Scale">
+            <button type="button" class="pill-btn" data-export-scale="1">1×</button>
+            <button type="button" class="pill-btn is-active" data-export-scale="2">2×</button>
+            <button type="button" class="pill-btn" data-export-scale="3">3×</button>
+          </div>
+          <button type="button" class="btn-secondary" id="btn-download-png">Download PNG</button>
+          <button type="button" class="btn-secondary" id="btn-download-svg">Download SVG</button>
+          <button type="button" class="btn-primary" id="btn-copy-svg">Copy SVG</button>
+        </div>
+      </div>
+    </main>
+
+    <!-- Right Layer Inspector -->
+    <aside class="inspector" aria-label="Layer stack and properties">
+      <div class="inspector-section stack-section">
+        <div class="section-head">
+          <h2 id="layers-heading">Layers (7)</h2>
+          <button type="button" class="mini-add-btn" id="btn-add-layer">+ Add Layer</button>
+        </div>
+        <div class="layer-list" id="layer-list" role="listbox" aria-label="Fluid layers"></div>
+      </div>
+
+      <div class="inspector-section props-section" id="layer-props">
+        <div class="section-head">
+          <h2>Layer Properties</h2>
+          <span class="layer-kind-pill" id="prop-kind-badge">Vector</span>
+        </div>
+
+        <div class="prop-group">
+          <label class="prop-label" for="prop-name">Layer Name</label>
+          <input type="text" class="text-input" id="prop-name" placeholder="Ribbon name" />
+        </div>
+
+        <div class="prop-group">
+          <label class="prop-label" for="prop-effect">Effect</label>
+          <select id="prop-effect" class="select-input"></select>
+        </div>
+
+        <div class="prop-group">
+          <div class="prop-label-row">
+            <span class="prop-label">Sutero Swatch</span>
+            <span class="swatch-readout" id="prop-swatch-readout">Institutional Navy · #142648</span>
+          </div>
+          <div class="swatch-grid" id="swatch-grid"></div>
+        </div>
+
+        <div class="prop-sliders">
+          <label class="slider-row">
+            <div class="slider-head"><span>Vertical Position (Y)</span><span id="val-y">16%</span></div>
+            <input type="range" id="prop-y" min="0" max="100" step="1" />
+          </label>
+
+          <label class="slider-row">
+            <div class="slider-head"><span>Ribbon Thickness</span><span id="val-thick">26%</span></div>
+            <input type="range" id="prop-thick" min="6" max="75" step="1" />
+          </label>
+
+          <label class="slider-row">
+            <div class="slider-head"><span>Density / Pattern Scale</span><span id="val-density">1.05</span></div>
+            <input type="range" id="prop-density" min="0.4" max="2.2" step="0.05" />
+          </label>
+
+          <label class="slider-row">
+            <div class="slider-head"><span>Silk Fill Wash</span><span id="val-wash">6%</span></div>
+            <input type="range" id="prop-wash" min="0" max="0.45" step="0.01" />
+          </label>
+
+          <label class="slider-row">
+            <div class="slider-head"><span>Opacity</span><span id="val-opacity">90%</span></div>
+            <input type="range" id="prop-opacity" min="0.05" max="1" step="0.01" />
+          </label>
+        </div>
+
+        <div class="prop-group">
+          <span class="prop-label">Horizontal Span</span>
+          <div class="pill-group pill-full" id="span-pills">
+            <button type="button" class="pill-btn" data-span="full">Full</button>
+            <button type="button" class="pill-btn" data-span="left">Left</button>
+            <button type="button" class="pill-btn" data-span="right">Right</button>
+            <button type="button" class="pill-btn" data-span="center">Center</button>
+          </div>
+        </div>
+
+        <div class="prop-group">
+          <span class="prop-label">Crest Hairline</span>
+          <div class="pill-group pill-full" id="hairline-pills">
+            <button type="button" class="pill-btn" data-hairline="off">Off</button>
+            <button type="button" class="pill-btn" data-hairline="fine">Fine</button>
+            <button type="button" class="pill-btn" data-hairline="crisp">Crisp</button>
+          </div>
+        </div>
+
+        <label class="check-row">
+          <input type="checkbox" id="prop-safezone" />
+          <span>Curve around active Safe-Zone pocket</span>
+        </label>
+      </div>
+    </aside>
+  </div>
+
+  <script type="module" src="./app.js"></script>
+</body>
+</html>
